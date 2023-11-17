@@ -27,7 +27,8 @@ def create_assistant(client):
     # If no assistant.json is present, create a new assistant using the below specifications
 
     # files_ids = kb_files_ids(client)
-    files_ids = ['file-nZBTM6iw834MBNZBCfqj8lJ7', 'file-kZkfvrUDZm9Dmd0u5mWlSkJ7', 'file-ctD7pRnKfa1OngflljyF7SPI', 'file-TVsZA1z0OJaZ6CJcCCjVdDz1', 'file-awBjUqkKH2apAxtYs6nkjyy2']
+    files_ids = ['file-nZBTM6iw834MBNZBCfqj8lJ7', 'file-kZkfvrUDZm9Dmd0u5mWlSkJ7', 'file-ctD7pRnKfa1OngflljyF7SPI', 'file-TVsZA1z0OJaZ6CJcCCjVdDz1', 'file-awBjUqkKH2apAxtYs6nkjyy2',
+    'file-feEOwnq5RlvgzPOBBltarwKe']
 
     # To change the knowledge document, modifiy the file name below to match your document
     # If you want to add multiple files, paste this function into ChatGPT and ask for it to add support for multiple files
@@ -106,3 +107,4 @@ def get_weather(days):
 
 if __name__ == "__main__":
     create_assistant(client)
+    # print(kb_files_ids(client, 'new_kb'))
