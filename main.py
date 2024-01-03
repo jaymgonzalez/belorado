@@ -72,7 +72,7 @@ def chat():
       # Handle the function call
       for tool_call in run_status.required_action.submit_tool_outputs.tool_calls:
         if tool_call.function.name == "get_weather":
-          # Process solar panel calculations
+          # Process the function call 
           arguments = json.loads(tool_call.function.arguments)
           output = functions.get_weather(
               arguments["days"])
