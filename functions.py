@@ -13,6 +13,25 @@ WEATHER_API_KEY = os.environ['WEATHER_API_KEY']
 # Init OpenAI Client
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+def kb_files_ids(client, kb_folder='kb'):
+    # List all files in the kb folder
+    files_in_kb = [f for f in os.listdir(kb_folder) if os.path.isfile(os.path.join(kb_folder, f))]
+
+    # Initialize an empty list to store file IDs
+    file_ids = []
+
+    # Upload each file and store its ID
+    for file_name in files_in_kb:
+        file_path = os.path.join(kb_folder, file_name)
+        with open(file_path, "rb") as file:
+            uploaded_file = client.files.create(
+                file=file,
+                purpose='assistants'
+            )
+            file_ids.append(uploaded_file.id)
+ 
+    return file_ids
+
 
 def create_assistant(client):
   assistant_file_path = 'assistant.json'
@@ -26,15 +45,10 @@ def create_assistant(client):
   else:
     # If no assistant.json is present, create a new assistant using the below specifications
 
-    # files_ids = kb_files_ids(client)
-    files_ids = ['file-nZBTM6iw834MBNZBCfqj8lJ7', 'file-kZkfvrUDZm9Dmd0u5mWlSkJ7', 'file-ctD7pRnKfa1OngflljyF7SPI', 'file-TVsZA1z0OJaZ6CJcCCjVdDz1', 'file-awBjUqkKH2apAxtYs6nkjyy2',
-    'file-feEOwnq5RlvgzPOBBltarwKe']
-
-    # To change the knowledge document, modifiy the file name below to match your document
-    # If you want to add multiple files, paste this function into ChatGPT and ask for it to add support for multiple files
+    files_ids = kb_files_ids(client)
 
     assistant = client.beta.assistants.create(
-        # Getting assistant prompt from "prompts.py" file, edit on left panel if you want to change the prompt
+        # Getting assistant prompt from "prompts.py" file.
         instructions=assistant_instructions,
         model="gpt-4-1106-preview",
         tools=[
@@ -42,7 +56,7 @@ def create_assistant(client):
                 "type": "retrieval"  # This adds the knowledge base as a tool
             },
             {
-                "type": "function",  # This adds the solar calculator as a tool
+                "type": "function",  # This adds the weather forecast as a tool
                 "function": {
                     "name": "get_weather",
                     "description":
@@ -73,26 +87,6 @@ def create_assistant(client):
 
   return assistant_id
 
-def kb_files_ids(client, kb_folder='kb'):
-
-    # List all files in the kb folder
-    files_in_kb = [f for f in os.listdir(kb_folder) if os.path.isfile(os.path.join(kb_folder, f))]
-
-    # Initialize an empty list to store file IDs
-    file_ids = []
-
-    # Upload each file and store its ID
-    for file_name in files_in_kb:
-        file_path = os.path.join(kb_folder, file_name)
-        with open(file_path, "rb") as file:
-            uploaded_file = client.files.create(
-                file=file,
-                purpose='assistants'
-            )
-            file_ids.append(uploaded_file.id)
- 
-    return file_ids
-
 def get_weather(days):
     url = f"https://weatherapi-com.p.rapidapi.com/forecast.json?q=Belorado&days={days}"
 
@@ -105,6 +99,3 @@ def get_weather(days):
 
     return response.json()
 
-if __name__ == "__main__":
-    create_assistant(client)
-    # print(kb_files_ids(client, 'new_kb'))
